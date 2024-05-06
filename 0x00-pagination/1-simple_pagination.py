@@ -42,7 +42,12 @@ class Server:
         return self.__dataset
 
     def get_page(self, page: int = 1, page_size: int = 10) -> List[List]:
+        """Returns a list of the obtained rows
 
+            Args:
+                page: the page result
+                page_size: the size of the result in the page
+        """
         assert type(page) is int
         assert page > 0
         assert type(page_size) is int
