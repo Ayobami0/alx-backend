@@ -49,14 +49,21 @@ class Server:
         else:
             index = 0
 
-        dataset = list(self.indexed_dataset())
         data = []
-        for i in dataset[index: index+page_size]:
-            data.append(self.indexed_dataset()[i])
+        i = index
+        extra_count = 0
+
+        while i < page_size + index + extra_count:
+            if not self.indexed_dataset().get(i, None):
+                extra_count += 1
+                i += 1
+                continue
+            data.append(self.indexed_dataset().get(i))
+            i += 1
 
         return {
             "index": index,
-            "next_index": dataset[index+page_size],
+            "next_index": i,
             "page_size": page_size,
             "data": data
         }
