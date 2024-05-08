@@ -48,5 +48,4 @@ class LIFOCache(BaseCaching):
         dictKey = self.cache_data.get(key, None)
         if dictKey is None:
             return None
-        del self.cache_data[key]
         return key

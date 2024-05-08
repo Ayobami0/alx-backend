@@ -27,9 +27,12 @@ class MRUCache(BaseCaching):
         """
         if key is None or item is None:
             return
-        if (not self.cache_data.get(key)
-                and len(self.cache_data) == self.MAX_ITEMS):
-            print("DISCARD:", self.cache_data[self.ACCESSED_ORDER[-1]])
+        if (not self.cache_data.get(key, None) and len(self.cache_data)
+                >= self.MAX_ITEMS):
+            dictKey = self.ACCESSED_ORDER[-1]
+            del self.cache_data[dictKey]
+            self.ACCESSED_ORDER.remove(dictKey)
+            print("DISCARD:", dictKey)
         self.__update_access(key)
         self.cache_data[key] = item
 
@@ -44,12 +47,12 @@ class MRUCache(BaseCaching):
         """
         if key is None:
             return None
+
         item = self.cache_data.get(key)
 
         if item is None:
             return None
-        self.ACCESSED_ORDER.remove(key)
-        del self.cache_data[key]
+        self.__update_access(key)
         return item
 
     @classmethod
