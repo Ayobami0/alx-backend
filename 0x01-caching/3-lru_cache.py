@@ -27,8 +27,11 @@ class LRUCache(BaseCaching):
         """
         if key is None or item is None:
             return
-        if len(self.cache_data) >= self.MAX_ITEMS:
-            print("DISCARD:", self.cache_data[self.ACCESSED_ORDER[0]])
+
+        if (self.cache_data.get(key, None) is None
+                and len(self.cache_data) >= self.MAX_ITEMS):
+            print("DISCARD:", self.ACCESSED_ORDER[0])
+
         self.__update_access(key)
         self.cache_data[key] = item
 
@@ -43,15 +46,21 @@ class LRUCache(BaseCaching):
         """
         if key is None:
             return None
-        self.ACCESSED_ORDER.remove(key)
-        return self.cache_data.pop(key, default=None)
 
-    @classmethod
-    def __update_access(cls, key):
+        item = self.cache_data.get(key)
+
+        if item is None:
+            return None
+        self.ACCESSED_ORDER.remove(key)
+        del self.cache_data[key]
+        return item
+
+    def __update_access(self, key):
         """Updates the access order of the keys in the cache
 
             Args:
                 key: the key
         """
-        cls.ACCESSED_ORDER.remove(key)
-        cls.ACCESSED_ORDER.append(key)
+        if key in self.ACCESSED_ORDER:
+            self.ACCESSED_ORDER.remove(key)
+        self.ACCESSED_ORDER.append(key)

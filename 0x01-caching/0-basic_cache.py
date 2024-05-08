@@ -13,7 +13,7 @@ Typical usage example:
 from base_caching import BaseCaching
 
 
-class BasicCaching(BaseCaching):
+class BasicCache(BaseCaching):
     """A class representing a basic caching system
         """
 
@@ -45,8 +45,4 @@ class BasicCaching(BaseCaching):
         """
         if key is None:
             return None
-        dictKey = self.cache_data.get(key, None)
-        if dictKey is None:
-            return None
-        del self.cache_data[key]
-        return key
+        return self.cache_data.get(key, None)

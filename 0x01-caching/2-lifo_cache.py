@@ -10,6 +10,7 @@ from base_caching import BaseCaching
 class LIFOCache(BaseCaching):
     """A class representing a caching system
     """
+    LAST_ACCESSED = None
 
     def __init__(self) -> None:
         """Initialize"""
@@ -26,8 +27,11 @@ class LIFOCache(BaseCaching):
         """
         if key is None or item is None:
             return
-        if len(self.cache_data) >= self.MAX_ITEMS:
-            print("DISCARD:", self.cache_data.popitem()[0])
+        if (not self.cache_data.get(key)
+                and len(self.cache_data) == self.MAX_ITEMS):
+            del self.cache_data[self.LAST_ACCESSED]
+            print("DISCARD:", self.LAST_ACCESSED)
+        self.LAST_ACCESSED = key
         self.cache_data[key] = item
 
     def get(self, key):
@@ -41,4 +45,8 @@ class LIFOCache(BaseCaching):
         """
         if key is None:
             return None
-        return self.cache_data.pop(key, default=None)
+        dictKey = self.cache_data.get(key, None)
+        if dictKey is None:
+            return None
+        del self.cache_data[key]
+        return key

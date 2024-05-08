@@ -27,7 +27,8 @@ class MRUCache(BaseCaching):
         """
         if key is None or item is None:
             return
-        if len(self.cache_data) >= self.MAX_ITEMS:
+        if (not self.cache_data.get(key)
+                and len(self.cache_data) == self.MAX_ITEMS):
             print("DISCARD:", self.cache_data[self.ACCESSED_ORDER[-1]])
         self.__update_access(key)
         self.cache_data[key] = item
@@ -43,8 +44,13 @@ class MRUCache(BaseCaching):
         """
         if key is None:
             return None
+        item = self.cache_data.get(key)
+
+        if item is None:
+            return None
         self.ACCESSED_ORDER.remove(key)
-        return self.cache_data.pop(key, default=None)
+        del self.cache_data[key]
+        return item
 
     @classmethod
     def __update_access(cls, key):
@@ -53,5 +59,6 @@ class MRUCache(BaseCaching):
             Args:
                 key: the key
         """
-        cls.ACCESSED_ORDER.remove(key)
+        if key in cls.ACCESSED_ORDER:
+            cls.ACCESSED_ORDER.remove(key)
         cls.ACCESSED_ORDER.append(key)
