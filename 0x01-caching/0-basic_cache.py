@@ -45,4 +45,8 @@ class BasicCaching(BaseCaching):
         """
         if key is None:
             return None
-        return self.cache_data.pop(key, default=None)
+        dictKey = self.cache_data.get(key, None)
+        if dictKey is None:
+            return None
+        del self.cache_data[key]
+        return key
